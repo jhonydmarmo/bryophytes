@@ -77,14 +77,14 @@
             <button class="biome-pill" data-biome="Pampa"        style="border-color:#33691E;color:#33691E;" onclick="setBiome('Pampa',this)">🌻 Pampa</button>
         </div>
 
-        <!-- Classe + Camadas -->
+        <!-- Filo + Camadas -->
         <div style="display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;">
-            <span style="font-weight:700;color:var(--primary);font-size:0.9rem;">Classe:</span>
-            <select id="sel-class" onchange="renderMap()" style="padding:0.4rem 0.8rem;border:2px solid var(--border);border-radius:8px;font-size:0.85rem;outline:none;cursor:pointer;">
-                <option value="">Todas</option>
-                <option value="Musci">Musci (Musgos)</option>
-                <option value="Hepaticae">Hepaticae (Hepáticas)</option>
-                <option value="Anthocerotae">Anthocerotae (Antóceros)</option>
+            <span style="font-weight:700;color:var(--primary);font-size:0.9rem;">Filo:</span>
+            <select id="sel-phylum" onchange="renderMap()" style="padding:0.4rem 0.8rem;border:2px solid var(--border);border-radius:8px;font-size:0.85rem;outline:none;cursor:pointer;">
+                <option value="">Todos</option>
+                <option value="Bryophyta">Bryophyta (Musgos)</option>
+                <option value="Marchantiophyta">Marchantiophyta (Hepáticas)</option>
+                <option value="Anthocerotophyta">Anthocerotophyta (Antóceros)</option>
             </select>
             <span style="margin-left:0.5rem;font-weight:700;color:var(--primary);font-size:0.9rem;">Camadas:</span>
             <button id="btn-biomas"  class="map-btn active" onclick="toggleLayer('biomas',this)">🌿 Biomas</button>
@@ -168,7 +168,7 @@
 'use strict';
 
 // ── Constantes ──────────────────────────────────────────────────────────────
-const CLASS_COLOR  = { Musci:'#2E7D32', Hepaticae:'#1565C0', Anthocerotae:'#880E4F' };
+const PHYLUM_COLOR = { Bryophyta:'#2E7D32', Marchantiophyta:'#1565C0', Anthocerotophyta:'#880E4F' };
 const BIOME_COLOR  = { 'Amazônia':'#2E7D32','Cerrado':'#795548','Mata Atlântica':'#1B5E20','Caatinga':'#E65100','Pantanal':'#01579B','Pampa':'#33691E' };
 const BIOME_ICONS  = { 'Amazônia':'🌳','Cerrado':'🌾','Mata Atlântica':'🌿','Caatinga':'🌵','Pantanal':'💧','Pampa':'🌻' };
 const BIOMES       = ['Amazônia','Cerrado','Mata Atlântica','Caatinga','Pantanal','Pampa'];
@@ -257,11 +257,11 @@ function initData() {
 
 // ── Renderizar mapa ─────────────────────────────────────────────────────────
 function renderMap() {
-    const selClass = document.getElementById('sel-class').value;
+    const selPhylum = document.getElementById('sel-phylum').value;
 
     const visible = allData.filter(r => {
         if (activeBiome !== 'all' && r.biome !== activeBiome) return false;
-        if (selClass && r.class !== selClass) return false;
+        if (selPhylum && r.phylum !== selPhylum) return false;
         return true;
     });
 
@@ -289,7 +289,7 @@ function renderMap() {
 
     // Adicionar pontos com canvas renderer
     visible.forEach(r => {
-        const color = CLASS_COLOR[r.class] || '#4A7C59';
+        const color = PHYLUM_COLOR[r.phylum] || '#4A7C59';
         const marker = L.circleMarker([r.lat, r.lon], {
             renderer, radius:5,
             fillColor:color, color:color,
@@ -297,7 +297,7 @@ function renderMap() {
         }).bindPopup(
             `<div class="pop-sp">${r.species || '—'}</div>` +
             `<div class="pop-row"><span class="pop-label">Família:</span>${r.family||'—'}</div>` +
-            `<div class="pop-row"><span class="pop-label">Classe:</span>${r.class||'—'}</div>` +
+            `<div class="pop-row"><span class="pop-label">Filo:</span>${r.phylum||'—'}</div>` +
             `<div class="pop-row"><span class="pop-label">Bioma:</span>${r.biome||'—'}</div>` +
             `<div class="pop-row"><span class="pop-label">Estado:</span>${r.state||'—'}</div>` +
             `<div class="pop-row"><span class="pop-label">Voucher:</span>${r.voucher||'—'}</div>` +

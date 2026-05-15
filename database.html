@@ -40,11 +40,11 @@
         <input type="text" class="search-input" id="search-input"
                placeholder="🔍  Buscar por espécie, família, voucher, município...">
         <div class="filter-row">
-            <select class="filter-select" id="filter-class">
-                <option value="">Todas as classes</option>
-                <option value="Musci">Musci (Musgos)</option>
-                <option value="Hepaticae">Hepaticae (Hepáticas)</option>
-                <option value="Anthocerotae">Anthocerotae (Antóceros)</option>
+            <select class="filter-select" id="filter-phylum">
+                <option value="">Todos os filos</option>
+                <option value="Bryophyta">Bryophyta (Musgos)</option>
+                <option value="Marchantiophyta">Marchantiophyta (Hepáticas)</option>
+                <option value="Anthocerotophyta">Anthocerotophyta (Antóceros)</option>
             </select>
             <select class="filter-select" id="filter-family">
                 <option value="">Todas as famílias</option>
@@ -197,7 +197,7 @@ function checkURLParam() {
 function getFilters() {
     return {
         search:  document.getElementById('search-input').value.toLowerCase().trim(),
-        cls:     document.getElementById('filter-class').value,
+        phylum:  document.getElementById('filter-phylum').value,
         family:  document.getElementById('filter-family').value,
         biome:   document.getElementById('filter-biome').value,
         state:   document.getElementById('filter-state').value,
@@ -209,7 +209,7 @@ function applyFilters() {
     const f = getFilters();
     filtered = allData.filter(r => {
         if (f.search && !JSON.stringify(r).toLowerCase().includes(f.search)) return false;
-        if (f.cls     && r.class     !== f.cls)     return false;
+        if (f.phylum  && r.phylum    !== f.phylum)  return false;
         if (f.family  && r.family    !== f.family)  return false;
         if (f.biome   && r.biome     !== f.biome)   return false;
         if (f.state   && r.state     !== f.state)   return false;
@@ -244,13 +244,13 @@ function renderTable() {
         const endemicBadge = r.endemic === 'Sim'
             ? '<span class="badge badge-endemic">Endêmica</span>'
             : '<span class="badge badge-not-endemic">Não</span>';
-        const classBadge = r.class === 'Musci' ? 'badge-musci'
-                         : r.class === 'Hepaticae' ? 'badge-hepaticae'
-                         : r.class === 'Anthocerotae' ? 'badge-anthocerotae' : '';
+        const phylumBadge = r.phylum === 'Bryophyta' ? 'badge-bryophyta'
+                         : r.phylum === 'Marchantiophyta' ? 'badge-marchantiophyta'
+                         : r.phylum === 'Anthocerotophyta' ? 'badge-anthocerotophyta' : '';
         return `<tr>
             <td><span class="sp-name">${r.species || '—'}</span></td>
             <td style="font-size:0.82rem; color:var(--muted);">${r.author || '—'}</td>
-            <td><span class="badge ${classBadge}">${r.class || '—'}</span></td>
+            <td><span class="badge ${phylumBadge}">${r.phylum || '—'}</span></td>
             <td>${r.family || '—'}</td>
             <td>${r.biome ? biomeBadge(r.biome) : '—'}</td>
             <td>${r.state || '—'}</td>
@@ -296,7 +296,7 @@ function sortTable(col) {
 
 function clearFilters() {
     document.getElementById('search-input').value = '';
-    ['filter-class','filter-family','filter-biome','filter-state','filter-endemic']
+    ['filter-phylum','filter-family','filter-biome','filter-state','filter-endemic']
         .forEach(id => document.getElementById(id).value = '');
     sortCol = ''; sortDir = 1;
     applyFilters();
@@ -313,7 +313,7 @@ function exportCSV() {
 
 // Event listeners
 document.getElementById('search-input').addEventListener('input', applyFilters);
-['filter-class','filter-family','filter-biome','filter-state','filter-endemic']
+['filter-phylum','filter-family','filter-biome','filter-state','filter-endemic']
     .forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
 </script>
 </body>
