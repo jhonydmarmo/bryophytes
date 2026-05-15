@@ -56,7 +56,7 @@
 <div style="background:linear-gradient(135deg,var(--dark),var(--primary));color:white;padding:2.5rem 2rem;">
     <div style="max-width:1200px;margin:0 auto;">
         <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.3rem;">🗺️ Mapas Interativos</h1>
-        <p style="opacity:0.8;font-size:0.97rem;">Visualize as ocorrências de briófitas no Brasil por bioma, classe e espécie</p>
+        <p style="opacity:0.8;font-size:0.97rem;">Visualize as ocorrências de briófitas no Brasil por bioma, filo e espécie</p>
     </div>
 </div>
 
@@ -102,9 +102,9 @@
     <!-- LEGENDA -->
     <div class="map-legend" style="margin-top:1rem;">
         <span style="font-weight:700;font-size:0.85rem;color:var(--primary);">Pontos:</span>
-        <div class="legend-item"><div class="legend-dot" style="background:#2E7D32;"></div> Musci</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#1565C0;"></div> Hepaticae</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#880E4F;"></div> Anthocerotae</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2E7D32;"></div> Bryophyta</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1565C0;"></div> Marchantiophyta</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#880E4F;"></div> Anthocerotophyta</div>
         <span style="margin-left:0.8rem;padding-left:0.8rem;border-left:1px solid #ddd;font-weight:700;font-size:0.85rem;color:var(--primary);">Biomas:</span>
         <div class="legend-item"><div style="width:14px;height:10px;background:#2E7D32;opacity:0.4;border:1px solid #2E7D32;border-radius:2px;"></div> Amazônia</div>
         <div class="legend-item"><div style="width:14px;height:10px;background:#A1887F;opacity:0.4;border:1px solid #795548;border-radius:2px;"></div> Cerrado</div>
@@ -236,11 +236,11 @@ function initData() {
     }
 
     const H = window.BRYO.H;
-    // H = ['species','family','class','biome','state','latitude','longitude','voucher','year','reference','endemic']
+    // H = ['species','family','phylum','biome','state','latitude','longitude','voucher','year','reference','endemic']
     allData = window.BRYO.R.map(row => ({
         species  : row[0] || '',
         family   : row[1] || '',
-        class    : row[2] || '',
+        phylum   : row[2] || '',
         biome    : row[3] || '',
         state    : row[4] || '',
         lat      : row[5],   // número
