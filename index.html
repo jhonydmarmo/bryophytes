@@ -24,6 +24,11 @@
     </ul>
 </nav>
 
+<!-- NOTIFICAÇÃO DE ATUALIZAÇÃO -->
+<div id="update-notification" style="display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%); background:#4CAF50; color:white; padding:1rem 2rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:9999; text-align:center;">
+    🔄 Novos dados disponíveis! <button onclick="location.reload()" style="background:#2e7d32; color:white; border:none; padding:0.3rem 0.8rem; border-radius:4px; cursor:pointer; margin-left:1rem;">Recarregar</button>
+</div>
+
 <!-- HERO -->
 <section class="hero">
     <div class="hero-content">
@@ -75,8 +80,8 @@
                 <h2 class="section-title">Sobre o projeto</h2>
                 <p class="section-sub">Laboratório de Biologia de Briófitas · UFPE</p>
             </div>
-            <p>O <strong>BRyophytes</strong> é uma iniciativa do <strong>Laboratório de Biologia de Briófitas da Universidade Federal de Pernambuco (UFPE)</strong> para compilar, organizar e disponibilizar dados atualizados de ocorrência da brioflora do Brasil.</p>
-            <p>O objetivo central é manter um banco de dados atualizado e de livre acesso com os registros de ocorrência de musgos, hepáticas e antóceros em todos os biomas brasileiros, incluindo nomes aceitos e mapas interativos de distribuição.</p>
+            <p>O <strong>BRyophytes</strong> é uma iniciativa do <strong>Laboratório de Biologia de Briófitas da Universidade Federal de Pernambuco (UFPE)</strong> para compilar, organizar e disponibilizar dados atualizados da brioflora do Brasil.</p>
+            <p>O objetivo central é manter um banco de dados atualizado e de livre acesso com os registros de ocorrência de musgos, hepáticas e antóceros em todos os biomas brasileiros, incluindo informações sobre endemismo, localidade geográfica e referências.</p>
             <p>Os dados são curados pela equipe do laboratório e complementam informações disponíveis no <em>Flora e Funga do Brasil 2020</em>, com atualização contínua a partir de novas coletas e revisões taxonômicas.</p>
             <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
                 <a href="contribute.html" class="btn btn-primary">📩 Contribuir com dados</a>
@@ -127,19 +132,19 @@
             <div style="background:white; border-radius:14px; padding:1.8rem; box-shadow:var(--shadow); border-top: 4px solid #2E7D32;">
                 <div style="font-size:2rem; margin-bottom:0.8rem;">🌿</div>
                 <h3 style="color:#2E7D32; margin-bottom:0.5rem;">Musgos (Bryophyta)</h3>
-                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">O maior grupo das briófitas. Inclui famílias como Sphagnaceae, Polytrichaceae, Bryaceae, Pottiaceae, entre muitas outras. Ocorrem em todos os biomas brasileiros.</p>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">O maior grupo das briófitas. Inclui famílias como Sphagnaceae, Polytrichaceae, Bryaceae, Pottiaceae, entre muitas outras.</p>
                 <div style="margin-top:1rem;"><span class="badge badge-bryophyta">Bryophyta</span></div>
             </div>
             <div style="background:white; border-radius:14px; padding:1.8rem; box-shadow:var(--shadow); border-top: 4px solid #1565C0;">
                 <div style="font-size:2rem; margin-bottom:0.8rem;">🍃</div>
                 <h3 style="color:#1565C0; margin-bottom:0.5rem;">Hepáticas (Marchantiophyta)</h3>
-                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">Segundo maior grupo. Inclui Marchantiopsida e Jungermanniopsida. Especialmente diversas em ambientes úmidos como Mata Atlântica e Amazônia.</p>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">Segundo maior grupo. Inclui Marchantiopsida e Jungermanniopsida. Especialmente diversas em ambientes úmidos com sombra.</p>
                 <div style="margin-top:1rem;"><span class="badge badge-marchantiophyta">Marchantiophyta</span></div>
             </div>
             <div style="background:white; border-radius:14px; padding:1.8rem; box-shadow:var(--shadow); border-top: 4px solid #880E4F;">
                 <div style="font-size:2rem; margin-bottom:0.8rem;">🌱</div>
                 <h3 style="color:#880E4F; margin-bottom:0.5rem;">Antóceros (Anthocerotophyta)</h3>
-                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">Grupo mais basal das briófitas. Menos diverso, mas ecologicamente relevante. Encontrados em solos úmidos e margem de rios em todo o Brasil.</p>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">Grupo mais basal das briófitas. Menos diverso, mas ecologicamente relevante. Encontrados em solos úmidos e margens de corpos d'água.</p>
                 <div style="margin-top:1rem;"><span class="badge badge-anthocerotophyta">Anthocerotophyta</span></div>
             </div>
         </div>
@@ -194,6 +199,39 @@
 
 <script src="bryophytes_data.js"></script>
 <script>
+// ┌─────────────────────────────────────────────────────────────┐
+// │ SISTEMA DE DETECÇÃO AUTOMÁTICA DE ATUALIZAÇÕES DE DADOS    │
+// │ Verifica a cada 30 segundos se há novos dados disponíveis  │
+// └─────────────────────────────────────────────────────────────┘
+
+let lastVersion = localStorage.getItem('bryoVersion') || '0';
+
+function checkForUpdates() {
+    fetch('version.json?t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+            if (data.version !== lastVersion) {
+                console.log(`📊 Atualização detectada: ${lastVersion} → ${data.version}`);
+                localStorage.setItem('bryoVersion', data.version);
+                document.getElementById('update-notification').style.display = 'block';
+                
+                // Auto-reload após 5 segundos
+                setTimeout(() => {
+                    location.reload();
+                }, 5000);
+            }
+        })
+        .catch(err => console.log('Verificação de atualização falhou (esperado offline)'));
+}
+
+// Verificar a cada 30 segundos
+setInterval(checkForUpdates, 30000);
+checkForUpdates(); // Verificação inicial
+
+// ┌─────────────────────────────────────────────────────────────┐
+// │ RESTO DO CÓDIGO DA PÁGINA (index.html)                     │
+// └─────────────────────────────────────────────────────────────┘
+
 // Toggle mobile menu
 function toggleMenu() {
     document.getElementById('nav-menu').classList.toggle('open');
