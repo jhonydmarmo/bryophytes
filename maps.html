@@ -203,8 +203,8 @@ fetch('biomas_brasil.geojson')
     .then(data => {
         geoLayers.biomas = L.geoJSON(data, {
             style: f => {
-                // Obtém o nome do bioma da propriedade name ou name_bioma
-                const biomeName = f.properties.name || f.properties.name_bioma || '';
+                // Propriedade correta: NM_BIOMA (não name ou name_bioma)
+                const biomeName = f.properties.NM_BIOMA || '';
                 // Encontra a cor correspondente no mapa BIOME_COLOR
                 const color = BIOME_COLOR[biomeName] || '#2C5F2E';
                 return {
@@ -217,7 +217,7 @@ fetch('biomas_brasil.geojson')
                 };
             },
             onEachFeature: (f, l) => {
-                const biomeName = f.properties.name || f.properties.name_bioma || '—';
+                const biomeName = f.properties.NM_BIOMA || '—';
                 l.bindTooltip(`<strong>${biomeName}</strong>`, { sticky:true });
             }
         }).addTo(map);
