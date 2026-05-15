@@ -343,11 +343,11 @@ body {
     letter-spacing: 0.3px;
 }
 
-.badge-endemic     { background: #FFF9C4; color: #795548; border: 1px solid #F9A825; }
-.badge-not-endemic { background: #ECEFF1; color: #546E7A; }
-.badge-musci       { background: #E8F5E9; color: #2E7D32; }
-.badge-hepaticae   { background: #E3F2FD; color: #1565C0; }
-.badge-anthocerotae{ background: #FCE4EC; color: #880E4F; }
+.badge-endemic          { background: #FFF9C4; color: #795548; border: 1px solid #F9A825; }
+.badge-not-endemic      { background: #ECEFF1; color: #546E7A; }
+.badge-bryophyta        { background: #E8F5E9; color: #2E7D32; }
+.badge-marchantiophyta  { background: #E3F2FD; color: #1565C0; }
+.badge-anthocerotophyta { background: #FCE4EC; color: #880E4F; }
 
 .pagination {
     display: flex;
