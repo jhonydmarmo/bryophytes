@@ -167,13 +167,13 @@
 <script>
 'use strict';
 
-// ── Constantes ──────────────────────────────────────────────────────────────
+// ── Constantes ──────────────────────────────────────────────────────────[...]
 const PHYLUM_COLOR = { Bryophyta:'#2E7D32', Marchantiophyta:'#1565C0', Anthocerotophyta:'#880E4F' };
 const BIOME_COLOR  = { 'Amazônia':'#2E7D32','Cerrado':'#795548','Mata Atlântica':'#1B5E20','Caatinga':'#E65100','Pantanal':'#01579B','Pampa':'#33691E' };
 const BIOME_ICONS  = { 'Amazônia':'🌳','Cerrado':'🌾','Mata Atlântica':'🌿','Caatinga':'🌵','Pantanal':'💧','Pampa':'🌻' };
 const BIOMES       = ['Amazônia','Cerrado','Mata Atlântica','Caatinga','Pantanal','Pampa'];
 
-// ── Mapa ────────────────────────────────────────────────────────────────────
+// ── Mapa ────────────────────────────────────────────────────────────[...]
 const map = L.map('map', { center:[-14.2, -51.9], zoom:4 });
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom:18
@@ -182,7 +182,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Canvas renderer — muito mais rápido para milhares de pontos
 const renderer = L.canvas({ padding:0.5 });
 
-// ── Camadas GeoJSON ─────────────────────────────────────────────────────────
+// ── Camadas GeoJSON ────────────────────────────────────────────────────────[...]
 const geoLayers  = {};
 const geoVisible = { biomas:true, estados:true };
 
@@ -202,8 +202,24 @@ fetch('biomas_brasil.geojson')
     })
     .then(data => {
         geoLayers.biomas = L.geoJSON(data, {
-            style: f => ({ fillColor:f.properties.color, fillOpacity:0.15, color:f.properties.color, weight:1.5, opacity:0.6, dashArray:'5 4' }),
-            onEachFeature: (f, l) => l.bindTooltip(`<strong>${f.properties.name}</strong>`, { sticky:true })
+            style: f => {
+                // Obtém o nome do bioma da propriedade name ou name_bioma
+                const biomeName = f.properties.name || f.properties.name_bioma || '';
+                // Encontra a cor correspondente no mapa BIOME_COLOR
+                const color = BIOME_COLOR[biomeName] || '#2C5F2E';
+                return {
+                    fillColor: color,
+                    fillOpacity: 0.15,
+                    color: color,
+                    weight: 1.5,
+                    opacity: 0.6,
+                    dashArray: '5 4'
+                };
+            },
+            onEachFeature: (f, l) => {
+                const biomeName = f.properties.name || f.properties.name_bioma || '—';
+                l.bindTooltip(`<strong>${biomeName}</strong>`, { sticky:true });
+            }
         }).addTo(map);
     })
     .catch(err => console.error('Erro ao carregar biomas:', err));
@@ -255,7 +271,7 @@ function initData() {
     renderMap();
 }
 
-// ── Renderizar mapa ─────────────────────────────────────────────────────────
+// ── Renderizar mapa ────────────────────────────────────────────────────────[...]
 function renderMap() {
     const selPhylum = document.getElementById('sel-phylum').value;
 
@@ -281,7 +297,7 @@ function renderMap() {
             const sz = n > 5000 ? 50 : n > 500 ? 42 : 34;
             const bg = n > 5000 ? '#1B5E20' : n > 500 ? '#388E3C' : '#66BB6A';
             return L.divIcon({
-                html: `<div style="background:${bg};color:#fff;border-radius:50%;width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.78rem;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.3);">${n>999?Math.round(n/1000)+'k':n}</div>`,
+                html: `<div style="background:${bg};color:#fff;border-radius:50%;width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.78rem;">${n}</div>`,
                 className:'', iconSize:[sz,sz]
             });
         }
@@ -354,7 +370,7 @@ function setBiome(biome, btn) {
     renderMap();
 }
 
-// ── Inicializar ─────────────────────────────────────────────────────────────
+// ── Inicializar ─────────────────────────────────────────────────────────[...]
 window.addEventListener('DOMContentLoaded', initData);
 </script>
 </body>
