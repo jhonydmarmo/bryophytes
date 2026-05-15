@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Biomas - Detalhado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <style>
+        body { margin: 0; font-family: monospace; }
+        #map { width: 100%; height: 50vh; }
+        #debug { 
+            background: #1e1e1e; 
+            color: #0f0; 
+            padding: 20px; 
+            height: 50vh; 
+            overflow-y: auto; 
+            font-size: 12px; 
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="debug"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const map = L.map('map', { center: [-14.2, -51.9], zoom: 4 });
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+const debug = document.getElementById('debug');
+let log = '';
+
+function addLog(msg) {
+    log += msg + '\n';
+    debug.textContent = log;
+    debug.scrollTop = debug.scrollHeight;
+    console.log(msg);
+}
+
+addLog('=== INICIANDO DEBUG ===\n');
+
+// Carrega GeoJSON
+fetch('biomas_brasil.geojson')
+    .then(r => {
+        addLog(`Fetch response status: ${r.status}`);
+        return r.json();
+    })
+    .then(data => {
+        addLog(`\n✅ GeoJSON carregado com sucesso!`);
+        addLog(`Total de features: ${data.features.length}`);
+        
+        // Inspecionar TODAS as features
+        addLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+        addLog(`INSPECIONANDO TODAS AS FEATURES:\n`);
+        
+        data.features.forEach((f, idx) => {
+            addLog(`\n[Feature ${idx}]`);
+            addLog(`  Propriedades: ${JSON.stringify(f.properties)}`);
+            addLog(`  Tem NM_BIOMA? ${f.properties.NM_BIOMA ? 'SIM: "' + f.properties.NM_BIOMA + '"' : 'NÃO'}`);
+            addLog(`  Tem name? ${f.properties.name ? 'SIM: "' + f.properties.name + '"' : 'NÃO'}`);
+            addLog(`  Tem nome? ${f.properties.nome ? 'SIM: "' + f.properties.nome + '"' : 'NÃO'}`);
+            
+            // Listar TODAS as chaves
+            const keys = Object.keys(f.properties);
+            addLog(`  Todas as chaves: [${keys.join(', ')}]`);
+            
+            // Testar valores
+            for (let key of keys) {
+                const val = f.properties[key];
+                addLog(`    ${key} = "${val}" (type: ${typeof val})`);
+            }
+        });
+        
+        // Agora adicionar ao mapa com cores
+        addLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+        addLog(`\nADICIONANDO AO MAPA...\n`);
+        
+        const BIOME_COLOR = {
+            'Amazônia': '#2E7D32',
+            'Cerrado': '#795548',
+            'Mata Atlântica': '#1B5E20',
+            'Caatinga': '#E65100',
+            'Pantanal': '#01579B',
+            'Pampa': '#33691E'
+        };
+        
+        L.geoJSON(data, {
+            style: f => {
+                const biomeName = f.properties.NM_BIOMA;
+                const color = BIOME_COLOR[biomeName] || '#999999';
+                addLog(`Style: NM_BIOMA="${biomeName}" → color="${color}"`);
+                
+                return {
+                    fillColor: color,
+                    fillOpacity: 0.3,
+                    color: color,
+                    weight: 2,
+                    opacity: 0.8
+                };
+            },
+            onEachFeature: (f, l) => {
+                const biomeName = f.properties.NM_BIOMA || 'SEM NOME';
+                addLog(`Tooltip: "${biomeName}"`);
+                l.bindTooltip(`<strong>${biomeName}</strong>`, { sticky: true });
+            }
+        }).addTo(map);
+        
+        addLog(`\n✅ PRONTO!`);
+    })
+    .catch(err => {
+        addLog(`\n❌ ERRO: ${err.message}`);
+        addLog(`Stack: ${err.stack}`);
+    });
+</script>
+</body>
+</html>
