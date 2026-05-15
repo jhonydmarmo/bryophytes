@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRyophytes — Base de Dados de Briófitas do Brasil</title>
+    <meta name="description" content="Iniciativa do Laboratório de Biologia de Briófitas da UFPE para compilar e disponibilizar dados atualizados da brioflora do Brasil.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+    <a class="navbar-brand" href="index.html"><span class="br">BR</span>yophytes</a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-menu" id="nav-menu">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="database.html">Base de Dados</a></li>
+        <li><a href="maps.html">Mapas</a></li>
+        <li><a href="contribute.html">Contribuir</a></li>
+    </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1><span class="br">BR</span>yophytes</h1>
+        <p class="tagline">Iniciativa do Laboratório de Biologia de Briófitas da UFPE para compilar dados atualizados de ocorrência da brioflora do Brasil — musgos, hepáticas e antóceros.</p>
+        <div class="hero-buttons">
+            <a href="database.html" class="btn btn-accent">🔍 Explorar Base de Dados</a>
+            <a href="maps.html" class="btn btn-outline">🗺️ Ver Mapas Interativos</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="number" id="stat-species">—</span>
+                <div class="label">Espécies Registradas</div>
+            </div>
+            <div class="stat-card">
+                <span class="number" id="stat-records">—</span>
+                <div class="label">Ocorrências</div>
+            </div>
+            <div class="stat-card">
+                <span class="number" id="stat-endemic">—</span>
+                <div class="label">Espécies Endêmicas</div>
+            </div>
+            <div class="stat-card">
+                <span class="number">6</span>
+                <div class="label">Biomas</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BIOMES -->
+<div class="section-full">
+    <div class="inner">
+        <div class="section-header">
+            <h2 class="section-title">Biomas Brasileiros</h2>
+            <p class="section-sub">Explore as ocorrências de briófitas por bioma</p>
+        </div>
+        <div class="biomes-grid" id="biomes-grid">
+            <!-- filled by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section">
+    <div class="about-grid">
+        <div class="about-text">
+            <div class="section-header">
+                <h2 class="section-title">Sobre o projeto</h2>
+                <p class="section-sub">Laboratório de Biologia de Briófitas · UFPE</p>
+            </div>
+            <p>O <strong>BRyophytes</strong> é uma iniciativa do <strong>Laboratório de Biologia de Briófitas da Universidade Federal de Pernambuco (UFPE)</strong> para compilar, organizar e disponibilizar dados atualizados de ocorrência da brioflora do Brasil.</p>
+            <p>O objetivo central é manter um banco de dados atualizado e de livre acesso com os registros de ocorrência de musgos, hepáticas e antóceros em todos os biomas brasileiros, incluindo nomes aceitos e mapas interativos de distribuição.</p>
+            <p>Os dados são curados pela equipe do laboratório e complementam informações disponíveis no <em>Flora e Funga do Brasil 2020</em>, com atualização contínua a partir de novas coletas e revisões taxonômicas.</p>
+            <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+                <a href="contribute.html" class="btn btn-primary">📩 Contribuir com dados</a>
+                <a href="database.html" class="btn btn-outline-dark">Acessar o banco</a>
+            </div>
+        </div>
+        <div class="about-features">
+            <div class="feature-item">
+                <div class="feature-icon">🔬</div>
+                <div class="feature-text">
+                    <strong>Nomes atualizados</strong>
+                    <span>Nomenclatura seguindo bases internacionais atualizadas (TROPICOS, Index Muscorum)</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🗺️</div>
+                <div class="feature-text">
+                    <strong>Mapas interativos</strong>
+                    <span>Visualize pontos de ocorrência e riqueza por bioma e estado</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🌿</div>
+                <div class="feature-text">
+                    <strong>Endemismos</strong>
+                    <span>Lista atualizada de espécies endêmicas do Brasil por bioma</span>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔄</div>
+                <div class="feature-text">
+                    <strong>Atualização contínua</strong>
+                    <span>Base atualizada regularmente com novos registros e revisões taxonômicas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CLASSES -->
+<div class="section-full">
+    <div class="inner">
+        <div class="section-header">
+            <h2 class="section-title">Grupos cobertos</h2>
+            <p class="section-sub">Briófitas: os três grupos principais</p>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.4rem;">
+            <div style="background:white; border-radius:14px; padding:1.8rem; box-shadow:var(--shadow); border-top: 4px solid #2E7D32;">
+                <div style="font-size:2rem; margin-bottom:0.8rem;">🌿</div>
+                <h3 style="color:#2E7D32; margin-bottom:0.5rem;">Musgos (Musci)</h3>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">O maior grupo das briófitas. Inclui famílias como Sphagnaceae, Polytrichaceae, Bryaceae, Pottiaceae, entre muitas outras. Ocorrem em todos os biomas brasileiros.</p>
+                <div style="margin-top:1rem;"><span class="badge badge-musci">Musci</span></div>
+            </div>
+            <div style="background:white; border-radius:14px; padding:1.8rem; box-shadow:var(--shadow); border-top: 4px solid #1565C0;">
+                <div style="font-size:2rem; margin-bottom:0.8rem;">🍃</div>
+                <h3 style="color:#1565C0; margin-bottom:0.5rem;">Hepáticas (Hepaticae)</h3>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">Segundo maior grupo. Inclui Marchantiopsida e Jungermanniopsida. Especialmente diversas em ambientes úmidos como Mata Atlântica e Amazônia.</p>
+                <div style="margin-top:1rem;"><span class="badge badge-hepaticae">Hepaticae</span></div>
+            </div>
+            <div style="background:white; border-radius:14px; padding:1.8rem; box-shadow:var(--shadow); border-top: 4px solid #880E4F;">
+                <div style="font-size:2rem; margin-bottom:0.8rem;">🌱</div>
+                <h3 style="color:#880E4F; margin-bottom:0.5rem;">Antóceros (Anthocerotae)</h3>
+                <p style="color:var(--muted); font-size:0.9rem; line-height:1.65;">Grupo mais basal das briófitas. Menos diverso, mas ecologicamente relevante. Encontrados em solos úmidos e margem de rios em todo o Brasil.</p>
+                <div style="margin-top:1rem;"><span class="badge badge-anthocerotae">Anthocerotae</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- UPDATES / NEWS -->
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">Atualizações recentes</h2>
+        <p class="section-sub">Últimas adições e revisões ao banco de dados</p>
+    </div>
+    <div id="updates-list" style="display:flex; flex-direction:column; gap:0.8rem;">
+        <!-- filled by JS -->
+    </div>
+    <div style="margin-top:1.5rem; text-align:center;">
+        <a href="database.html" class="btn btn-primary">Ver todo o banco de dados →</a>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="footer-brand-name"><span class="br">BR</span>yophytes</div>
+            <p>Iniciativa do Laboratório de Biologia de Briófitas da Universidade Federal de Pernambuco (UFPE) para compilar e disponibilizar dados atualizados da brioflora do Brasil.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Páginas</h4>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="database.html">Base de Dados</a></li>
+                <li><a href="maps.html">Mapas Interativos</a></li>
+                <li><a href="contribute.html">Contribuir</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Referências</h4>
+            <ul>
+                <li><a href="https://floradobrasil.jbrj.gov.br/" target="_blank">Flora e Funga do Brasil</a></li>
+                <li><a href="http://www.tropicos.org/" target="_blank">TROPICOS</a></li>
+                <li><a href="https://www.gbif.org/" target="_blank">GBIF</a></li>
+                <li><a href="https://www.iucnredlist.org/" target="_blank">IUCN Red List</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2025 BRyophytes. Dados abertos para ciência e conservação.</span>
+        <span>Hospedado no <a href="https://pages.github.com/" target="_blank" style="color:var(--accent);">GitHub Pages</a></span>
+    </div>
+</footer>
+
+<script src="data/bryophytes_data.js"></script>
+<script>
+// Toggle mobile menu
+function toggleMenu() {
+    document.getElementById('nav-menu').classList.toggle('open');
+}
+
+// Biome definitions
+const biomes = [
+    { id: 'Amazônia',     label: 'Amazônia',      icon: '🌳', css: 'bg-amazonia' },
+    { id: 'Cerrado',      label: 'Cerrado',        icon: '🌾', css: 'bg-cerrado'  },
+    { id: 'Mata Atlântica', label: 'Mata Atlântica', icon: '🌿', css: 'bg-mata'  },
+    { id: 'Caatinga',     label: 'Caatinga',       icon: '🌵', css: 'bg-caatinga' },
+    { id: 'Pantanal',     label: 'Pantanal',       icon: '💧', css: 'bg-pantanal' },
+    { id: 'Pampa',        label: 'Pampa',          icon: '🌻', css: 'bg-pampa'    },
+];
+
+// Carregar dados do JS embutido
+(function init() {
+    const fallback = () => {
+        const grid = document.getElementById('biomes-grid');
+        biomes.forEach(b => {
+            const card = document.createElement('a');
+            card.href = 'database.html';
+            card.className = 'biome-card';
+            card.innerHTML = `<div class="biome-header ${b.css}"><span class="biome-icon">${b.icon}</span> ${b.label}</div>
+                <div class="biome-body"><div class="sp-count">—</div><div class="sp-label">espécies</div><div class="sp-endemic">🌟 — endêmicas</div></div>`;
+            grid.appendChild(card);
+        });
+    };
+
+    if (typeof window.BRYO === 'undefined') { fallback(); return; }
+
+    const H = window.BRYO.H;
+    const data = window.BRYO.R.map(r => { const o={}; H.forEach((h,i)=>o[h]=r[i]!=null?String(r[i]):''); return o; });
+
+    {  // same logic as before, just using data directly
+        const species    = [...new Set(data.map(r => r.species))].filter(Boolean);
+        const endemics   = data.filter(r => r.endemic && r.endemic.toLowerCase() === 'sim')
+                               .map(r => r.species);
+        const uniqEndemic = [...new Set(endemics)];
+
+        // Stats
+        document.getElementById('stat-species').textContent = species.length.toLocaleString('pt-BR');
+        document.getElementById('stat-records').textContent  = data.length.toLocaleString('pt-BR');
+        document.getElementById('stat-endemic').textContent  = uniqEndemic.length.toLocaleString('pt-BR');
+
+        // Biomes grid
+        const grid = document.getElementById('biomes-grid');
+        biomes.forEach(b => {
+            const biomeRecords = data.filter(r => r.biome === b.id);
+            const biomeSpecies = [...new Set(biomeRecords.map(r => r.species))].filter(Boolean);
+            const biomeEndemic = [...new Set(biomeRecords.filter(r => r.endemic && r.endemic.toLowerCase() === 'sim').map(r => r.species))];
+            const card = document.createElement('a');
+            card.href = `database.html?biome=${encodeURIComponent(b.id)}`;
+            card.className = 'biome-card';
+            card.innerHTML = `
+                <div class="biome-header ${b.css}">
+                    <span class="biome-icon">${b.icon}</span> ${b.label}
+                </div>
+                <div class="biome-body">
+                    <div class="sp-count">${biomeSpecies.length}</div>
+                    <div class="sp-label">espécies registradas</div>
+                    <div class="sp-endemic">🌟 ${biomeEndemic.length} endêmicas</div>
+                </div>`;
+            grid.appendChild(card);
+        });
+
+        // Recent updates (last 5 records by year, sorted desc)
+        const sorted = [...data].sort((a,b) => (b.year||0) - (a.year||0)).slice(0, 5);
+        const ul = document.getElementById('updates-list');
+        sorted.forEach(r => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background:white; border-radius:10px; padding:1rem 1.3rem; box-shadow:var(--shadow); display:flex; gap:1rem; align-items:center;';
+            div.innerHTML = `
+                <div style="font-size:1.4rem;">🌿</div>
+                <div>
+                    <span style="font-style:italic; font-weight:600; color:var(--primary);">${r.species || '—'}</span>
+                    <span style="color:var(--muted); font-size:0.85rem;"> ${r.author ? '(' + r.author + ')' : ''}</span>
+                    <div style="font-size:0.82rem; color:var(--muted); margin-top:0.2rem;">
+                        ${r.family || ''} · ${r.biome || ''} · ${r.state || ''} · ${r.year || ''}
+                    </div>
+                </div>`;
+            ul.appendChild(div);
+        });
+    }
+})();
+</script>
+</body>
+</html>

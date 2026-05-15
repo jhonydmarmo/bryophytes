@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Dados — BRyophytes</title>
+    <meta name="description" content="Busque e filtre espécies de briófitas por família, bioma, estado e endemismo.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+    <a class="navbar-brand" href="index.html"><span class="br">BR</span>yophytes</a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-menu" id="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="database.html" class="active">Base de Dados</a></li>
+        <li><a href="maps.html">Mapas</a></li>
+        <li><a href="contribute.html">Contribuir</a></li>
+    </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div style="background: linear-gradient(135deg, var(--dark), var(--primary)); color:white; padding: 2.5rem 2rem;">
+    <div style="max-width:1200px; margin:0 auto;">
+        <h1 style="font-size:2rem; font-weight:800; margin-bottom:0.3rem;">🔬 Base de Dados</h1>
+        <p style="opacity:0.8; font-size:0.97rem;">Busque, filtre e explore os registros de briófitas dos biomas brasileiros</p>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="section">
+
+    <!-- TOOLBAR -->
+    <div class="db-toolbar">
+        <input type="text" class="search-input" id="search-input"
+               placeholder="🔍  Buscar por espécie, família, voucher, município...">
+        <div class="filter-row">
+            <select class="filter-select" id="filter-class">
+                <option value="">Todas as classes</option>
+                <option value="Musci">Musci (Musgos)</option>
+                <option value="Hepaticae">Hepaticae (Hepáticas)</option>
+                <option value="Anthocerotae">Anthocerotae (Antóceros)</option>
+            </select>
+            <select class="filter-select" id="filter-family">
+                <option value="">Todas as famílias</option>
+            </select>
+            <select class="filter-select" id="filter-biome">
+                <option value="">Todos os biomas</option>
+                <option value="Amazônia">Amazônia</option>
+                <option value="Cerrado">Cerrado</option>
+                <option value="Mata Atlântica">Mata Atlântica</option>
+                <option value="Caatinga">Caatinga</option>
+                <option value="Pantanal">Pantanal</option>
+                <option value="Pampa">Pampa</option>
+            </select>
+            <select class="filter-select" id="filter-state">
+                <option value="">Todos os estados</option>
+            </select>
+            <select class="filter-select" id="filter-endemic">
+                <option value="">Endemismo (todos)</option>
+                <option value="Sim">Endêmicas</option>
+                <option value="Não">Não endêmicas</option>
+            </select>
+            <button class="btn btn-outline-dark btn-sm" onclick="clearFilters()">✕ Limpar filtros</button>
+            <button class="btn btn-primary btn-sm" onclick="exportCSV()">⬇ Exportar CSV</button>
+        </div>
+    </div>
+
+    <!-- RESULTS BAR -->
+    <div class="results-bar">
+        <span id="results-count">Carregando...</span>
+        <span style="font-size:0.8rem;">Clique nos cabeçalhos para ordenar</span>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+        <table class="sp-table" id="sp-table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('species')">Espécie <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('author')">Autor <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('class')">Classe <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('family')">Família <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('biome')">Bioma <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('state')">Estado <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('municipality')">Município <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('endemic')">Endêmica <span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('year')">Ano <span class="sort-icon">↕</span></th>
+                    <th>Voucher</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr><td colspan="10" style="text-align:center; padding:2rem; color:var(--muted);">Carregando dados...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="footer-brand-name"><span class="br">BR</span>yophytes</div>
+            <p>Iniciativa do Laboratório de Biologia de Briófitas da UFPE para compilar dados atualizados da brioflora do Brasil.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Páginas</h4>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="database.html">Base de Dados</a></li>
+                <li><a href="maps.html">Mapas Interativos</a></li>
+                <li><a href="contribute.html">Contribuir</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Referências</h4>
+            <ul>
+                <li><a href="https://floradobrasil.jbrj.gov.br/" target="_blank">Flora e Funga do Brasil</a></li>
+                <li><a href="http://www.tropicos.org/" target="_blank">TROPICOS</a></li>
+                <li><a href="https://www.gbif.org/" target="_blank">GBIF</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2025 BRyophytes. Dados abertos para ciência e conservação.</span>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="data/bryophytes_data.js"></script>
+<script>
+function toggleMenu() { document.getElementById('nav-menu').classList.toggle('open'); }
+
+const PAGE_SIZE = 20;
+let allData = [], filtered = [], sortCol = '', sortDir = 1, currentPage = 1;
+
+// Biome colors for badges
+const biomeColors = {
+    'Amazônia':      '#E8F5E9:#2E7D32',
+    'Cerrado':       '#FFF8E1:#795548',
+    'Mata Atlântica':'#E8F5E9:#1B5E20',
+    'Caatinga':      '#FFF3E0:#E65100',
+    'Pantanal':      '#E3F2FD:#01579B',
+    'Pampa':         '#F1F8E9:#33691E',
+};
+
+function biomeBadge(b) {
+    const [bg, color] = (biomeColors[b] || '#f5f5f5:#555').split(':');
+    return `<span class="badge" style="background:${bg};color:${color};">${b}</span>`;
+}
+
+// Carregar dados do arquivo JS embutido (funciona local e no GitHub Pages)
+(function loadData() {
+    if (typeof window.BRYO === 'undefined') {
+        document.getElementById('table-body').innerHTML =
+            '<tr><td colspan="10" style="text-align:center;padding:2rem;color:#c00;">Arquivo data/bryophytes_data.js não encontrado.</td></tr>';
+        document.getElementById('results-count').textContent = 'Erro ao carregar dados.';
+        return;
+    }
+    const H = window.BRYO.H;
+    allData = window.BRYO.R.map(r => {
+        const obj = {};
+        H.forEach((h, i) => obj[h] = r[i] !== null && r[i] !== undefined ? String(r[i]) : '');
+        return obj;
+    });
+    populateFilters();
+    checkURLParam();
+    applyFilters();
+})();
+
+function populateFilters() {
+    const families = [...new Set(allData.map(r => r.family).filter(Boolean))].sort();
+    const states   = [...new Set(allData.map(r => r.state).filter(Boolean))].sort();
+    const fSel = document.getElementById('filter-family');
+    const sSel = document.getElementById('filter-state');
+    families.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; fSel.appendChild(o); });
+    states.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sSel.appendChild(o); });
+}
+
+function checkURLParam() {
+    const params = new URLSearchParams(window.location.search);
+    const biome = params.get('biome');
+    if (biome) {
+        const sel = document.getElementById('filter-biome');
+        sel.value = biome;
+    }
+}
+
+function getFilters() {
+    return {
+        search:  document.getElementById('search-input').value.toLowerCase().trim(),
+        cls:     document.getElementById('filter-class').value,
+        family:  document.getElementById('filter-family').value,
+        biome:   document.getElementById('filter-biome').value,
+        state:   document.getElementById('filter-state').value,
+        endemic: document.getElementById('filter-endemic').value,
+    };
+}
+
+function applyFilters() {
+    const f = getFilters();
+    filtered = allData.filter(r => {
+        if (f.search && !JSON.stringify(r).toLowerCase().includes(f.search)) return false;
+        if (f.cls     && r.class     !== f.cls)     return false;
+        if (f.family  && r.family    !== f.family)  return false;
+        if (f.biome   && r.biome     !== f.biome)   return false;
+        if (f.state   && r.state     !== f.state)   return false;
+        if (f.endemic && r.endemic   !== f.endemic) return false;
+        return true;
+    });
+    if (sortCol) {
+        filtered.sort((a,b) => {
+            const va = (a[sortCol]||'').toString().toLowerCase();
+            const vb = (b[sortCol]||'').toString().toLowerCase();
+            return va < vb ? -sortDir : va > vb ? sortDir : 0;
+        });
+    }
+    currentPage = 1;
+    renderTable();
+    renderPagination();
+    document.getElementById('results-count').textContent =
+        `${filtered.length} registro${filtered.length !== 1 ? 's' : ''} encontrado${filtered.length !== 1 ? 's' : ''}`;
+}
+
+function renderTable() {
+    const tbody = document.getElementById('table-body');
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const page  = filtered.slice(start, start + PAGE_SIZE);
+
+    if (page.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2.5rem;color:var(--muted);">Nenhum registro encontrado para os filtros selecionados.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = page.map(r => {
+        const endemicBadge = r.endemic === 'Sim'
+            ? '<span class="badge badge-endemic">Endêmica</span>'
+            : '<span class="badge badge-not-endemic">Não</span>';
+        const classBadge = r.class === 'Musci' ? 'badge-musci'
+                         : r.class === 'Hepaticae' ? 'badge-hepaticae'
+                         : r.class === 'Anthocerotae' ? 'badge-anthocerotae' : '';
+        return `<tr>
+            <td><span class="sp-name">${r.species || '—'}</span></td>
+            <td style="font-size:0.82rem; color:var(--muted);">${r.author || '—'}</td>
+            <td><span class="badge ${classBadge}">${r.class || '—'}</span></td>
+            <td>${r.family || '—'}</td>
+            <td>${r.biome ? biomeBadge(r.biome) : '—'}</td>
+            <td>${r.state || '—'}</td>
+            <td style="font-size:0.83rem;">${r.municipality || '—'}</td>
+            <td>${endemicBadge}</td>
+            <td>${r.year || '—'}</td>
+            <td style="font-size:0.78rem; color:var(--muted);">${r.voucher || '—'}</td>
+        </tr>`;
+    }).join('');
+}
+
+function renderPagination() {
+    const total = Math.ceil(filtered.length / PAGE_SIZE);
+    const pg = document.getElementById('pagination');
+    if (total <= 1) { pg.innerHTML = ''; return; }
+
+    let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ Anterior</button>`;
+    for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || Math.abs(i - currentPage) <= 2) {
+            html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+        } else if (Math.abs(i - currentPage) === 3) {
+            html += `<span style="padding:0.45rem 0.4rem;color:var(--muted);">…</span>`;
+        }
+    }
+    html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>Próxima ›</button>`;
+    pg.innerHTML = html;
+}
+
+function goPage(n) {
+    const total = Math.ceil(filtered.length / PAGE_SIZE);
+    if (n < 1 || n > total) return;
+    currentPage = n;
+    renderTable();
+    renderPagination();
+    window.scrollTo({ top: 200, behavior: 'smooth' });
+}
+
+function sortTable(col) {
+    if (sortCol === col) sortDir *= -1;
+    else { sortCol = col; sortDir = 1; }
+    applyFilters();
+}
+
+function clearFilters() {
+    document.getElementById('search-input').value = '';
+    ['filter-class','filter-family','filter-biome','filter-state','filter-endemic']
+        .forEach(id => document.getElementById(id).value = '');
+    sortCol = ''; sortDir = 1;
+    applyFilters();
+}
+
+function exportCSV() {
+    const csv = Papa.unparse(filtered);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'bryophytes_export.csv'; a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Event listeners
+document.getElementById('search-input').addEventListener('input', applyFilters);
+['filter-class','filter-family','filter-biome','filter-state','filter-endemic']
+    .forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+</script>
+</body>
+</html>
