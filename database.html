@@ -315,6 +315,70 @@ function exportCSV() {
 document.getElementById('search-input').addEventListener('input', applyFilters);
 ['filter-phylum','filter-family','filter-biome','filter-state','filter-endemic']
     .forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+
+// Auto-update detection system (same as index.html)
+(function initAutoUpdate() {
+    const VERSION_URL = 'version.json';
+    const CHECK_INTERVAL = 30000;
+    const STORAGE_KEY = 'bryophytes_version';
+
+    function checkForUpdates() {
+        fetch(VERSION_URL + '?t=' + Date.now())
+            .then(r => r.json())
+            .then(remote => {
+                const local = localStorage.getItem(STORAGE_KEY);
+                if (!local) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+                    return;
+                }
+                const localData = JSON.parse(local);
+                if (remote.version !== localData.version || remote.lastUpdated !== localData.lastUpdated) {
+                    showUpdateNotification(remote);
+                }
+            })
+            .catch(err => console.log('Version check:', err.message));
+    }
+
+    function showUpdateNotification(remote) {
+        const notif = document.createElement('div');
+        notif.id = 'update-notification';
+        notif.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#4CAF50; color:white; padding:1rem 1.5rem; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:9999; font-family:var(--font); animation: slideIn 0.3s ease;';
+        notif.innerHTML = `
+            <div style="display:flex; align-items:center; gap:0.8rem;">
+                <span style="font-size:1.3rem;">🔄</span>
+                <div>
+                    <strong>Nova versão disponível!</strong>
+                    <div style="font-size:0.85rem; opacity:0.9;">Recarregando em <span id="countdown">5</span>s...</div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(notif);
+
+        let count = 5;
+        const countdownEl = document.getElementById('countdown');
+        const timer = setInterval(() => {
+            count--;
+            if (countdownEl) countdownEl.textContent = count;
+            if (count <= 0) {
+                clearInterval(timer);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+                window.location.reload();
+            }
+        }, 1000);
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    checkForUpdates();
+    setInterval(checkForUpdates, CHECK_INTERVAL);
+})();
 </script>
 </body>
 </html>
